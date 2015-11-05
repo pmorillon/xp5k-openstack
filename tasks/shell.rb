@@ -21,3 +21,13 @@ task :shell do
   fork_exec('ssh', SSH_CONFIGFILE_OPT.split(" "), 'root@' + host)
 end
 
+desc 'Launch command in parallel, need cmd=<command> and host=<role|FQDN>'
+task :cmd do
+  abort "Need cmd=" unless cmd = ENV['cmd']
+  user = ENV['user'] || 'root'
+  hosts = parse_host()
+  on hosts, :user => user do
+    cmd
+  end
+end
+
