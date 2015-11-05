@@ -1,3 +1,10 @@
+# Definitions
+#
+def upload_bootstrap_env(host)
+  sh %{cd provision/puppet && tar -cf - . | ssh#{SSH_CONFIGFILE_OPT} root@#{host} 'mkdir -p /etc/puppetlabs/code/environments/bootstrap && cd /etc/puppetlabs/code/environments/bootstrap && tar xvf -'}
+end
+
+
 # Puppet tasks
 #
 namespace :puppet do
@@ -9,13 +16,12 @@ namespace :puppet do
       on(roles('all'), user: 'root') do
 
         # Puppet 3 installation
-        repo_pkg, agent_pkg_name = 'puppetlabs-release-trusty.deb', 'puppet'
+        #repo_pkg, agent_pkg_name = 'puppetlabs-release-trusty.deb', 'puppet'
 
         # Puppet 4 installation
-        #repo_pkg, agent_pkg_name = 'puppetlabs-release-pc1-trusty.deb', 'puppet-agent'
+        repo_pkg, agent_pkg_name = 'puppetlabs-release-pc1-trusty.deb', 'puppet-agent'
 
         url = "http://apt.puppetlabs.com/#{repo_pkg}"
-        url, agent_pkg_name = "http://apt.puppetlabs.com/#{repo_pkg}", 'puppet'
         cmd = [] << "http_proxy=http://proxy:3128 wget -q #{url} && dpkg -i #{repo_pkg}"
         cmd << "apt-get update && apt-get install -y lsb-release #{agent_pkg_name}"
         cmd << "rm #{repo_pkg}"
@@ -27,8 +33,10 @@ namespace :puppet do
 
     desc 'Install Puppet server'
     task :install do
-      on(roles('puppetserver'), user: 'root') do
-        'hostname && date && uptime'
+      puppetserver_fqdn = roles('puppetserver').first
+      upload_bootstrap_env(puppetserver_fqdn)
+      on(puppetserver_fqdn, user: 'root') do
+        "/opt/puppetlabs/bin/puppet apply --environment bootstrap -e 'include xp::locales,xp::puppet::server'"
       end
     end
   end
