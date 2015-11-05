@@ -1,0 +1,7 @@
+# OSX hidden files
+.DS_Store
+
+# XP5K
+xp.conf
+.xp_cache
+
