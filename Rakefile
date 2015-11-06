@@ -65,7 +65,8 @@ task :run do
     'grid5000:jobs',
     'grid5000:deploy',
     'puppet:agent:install',
-    'puppet:server:install'
+    'puppet:server:install',
+    'network:vlan'
   ]
   workflow.each do |task|
     Rake::Task[task].execute
