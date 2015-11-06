@@ -3,7 +3,7 @@
 deployment_def = {
   site:        XP5K::Config[:site],
   environment: 'ubuntu-x64-1404',
-  roles:       %w{ puppetserver controller },
+  jobs:        [XP5K::Config[:jobname]],
   key:         File.read(XP5K::Config[:public_key])
 }
 

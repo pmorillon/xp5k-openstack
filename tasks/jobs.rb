@@ -1,6 +1,6 @@
 # XP5K job
 #
-resources = [] << %{{type='kavlan'}/vlan=1+/nodes=2,walltime=#{XP5K::Config[:walltime]}}
+resources = [] << %{{type='kavlan-local'}/vlan=1+{ethnb='2'}/nodes=4,walltime=#{XP5K::Config[:walltime]}}
 roles = [
   XP5K::Role.new({
     name: 'puppetserver',
@@ -9,6 +9,10 @@ roles = [
   XP5K::Role.new({
     name: 'controller',
     size: 1
+  }),
+  XP5K::Role.new({
+    name: 'computes',
+    size: 2
   })
 ]
 
@@ -16,7 +20,7 @@ xp.define_job({
   resources:  resources,
   site:       XP5K::Config[:site],
   types:      ['deploy'],
-  name:       'xp5k_openstack',
+  name:       XP5K::Config[:jobname],
   roles:      roles,
   command:    'sleep 186400'
 })
