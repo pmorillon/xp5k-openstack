@@ -14,13 +14,14 @@ namespace :puppet do
     desc 'Install Puppet agent package on all nodes'
     task :install do
       on(roles('all'), user: 'root') do
-
-        # Puppet 3 installation
-        #repo_pkg, agent_pkg_name = 'puppetlabs-release-trusty.deb', 'puppet'
-
-        # Puppet 4 installation
-        repo_pkg, agent_pkg_name = 'puppetlabs-release-pc1-trusty.deb', 'puppet-agent'
-
+        repo_pkg, agent_pkg_name = case XP5K::Config[:puppet_release]
+          when 3 then
+            ['puppetlabs-release-trusty.deb', 'puppet']
+          when 4 then
+            ['puppetlabs-release-pc1-trusty.deb', 'puppet-agent']
+          else
+            raise "Puppet release #{XP5K::Config[:puppet_release]} not supported."
+        end
         url = "http://apt.puppetlabs.com/#{repo_pkg}"
         cmd = [] << "http_proxy=http://proxy:3128 wget -q #{url} && dpkg -i #{repo_pkg}"
         cmd << "apt-get update && apt-get install -y lsb-release #{agent_pkg_name}"

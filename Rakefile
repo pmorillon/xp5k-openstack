@@ -24,11 +24,13 @@ def xp; @xp; end
 
 # Defaults configuration
 #
-XP5K::Config[:scenario]     ||= 'starter_kit'
-XP5K::Config[:walltime]     ||= '1:00:00'
-XP5K::Config[:user]         ||= ENV['USER']
-XP5K::Config[:computes]     ||= 1
-XP5K::Config[:notification] ||= false
+XP5K::Config[:scenario]       ||= 'starter_kit'
+XP5K::Config[:walltime]       ||= '1:00:00'
+XP5K::Config[:user]           ||= ENV['USER']
+XP5K::Config[:computes]       ||= 1
+XP5K::Config[:notification]   ||= false
+XP5K::Config[:jobname]        ||= 'xp5k_openstack'
+XP5K::Config[:puppet_release] ||= 4
 
 
 # Definitions
