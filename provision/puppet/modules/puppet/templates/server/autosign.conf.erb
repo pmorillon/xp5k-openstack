@@ -1,0 +1,6 @@
+# Installed by Puppet
+# template('puppet/server/autosign.conf.erb')
+<% @autosign.each do |host| -%>
+<%= host %>
+<% end -%>
+

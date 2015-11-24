@@ -1,6 +1,6 @@
 # XP5K Roles
 #
 role 'all' do
-  roles 'puppetserver', 'controller', 'computes'
+  roles 'puppetserver', 'controller'
 end
 

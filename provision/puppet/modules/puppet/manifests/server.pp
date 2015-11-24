@@ -9,7 +9,8 @@ class puppet::server (
   Integer $puppetdb_port      = 8081,
   $reports                    = undef,
   String $ca                  = 'enabled',
-  Boolean $soft_write_failure = true
+  Boolean $soft_write_failure = true,
+  Array $autosign             = []
 ) {
 
   # Resources
@@ -69,6 +70,12 @@ class puppet::server (
       owner   => root,
       group   => root,
       mode    => '0644';
+    '/etc/puppetlabs/puppet/autosign.conf':
+      ensure  => file,
+      owner   => root,
+      group   => root,
+      mode    => '0644',
+      content => template('puppet/server/autosign.conf.erb');
     '/etc/puppetlabs/puppet/routes.yaml':
       ensure  => file,
       owner   => puppet,
