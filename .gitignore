@@ -5,3 +5,6 @@
 xp.conf
 .xp_cache
 
+# Scenarios
+scenarios/*/hiera/generated
+scenarios/*/puppet/modules-openstack
