@@ -63,8 +63,22 @@ namespace :scenario do
     desc 'Configure public bridge'
     task :public_bridge do
       on(roles('controller'), user: 'root') do
-        #%{export IP_ADDR=$(/opt/puppetlabs/bin/facter ipaddress) && ip addr add $IP_ADDR/20 dev br-ex && ip addr flush eth0 && ovs-vsctl add-port br-ex eth0 }
         %{ ovs-vsctl add-port br-ex eth0 && ip addr flush eth0 && dhclient -nw br-ex }
+      end
+    end
+
+    desc 'Configure Openstack network'
+    task :network do
+      on(roles('controller'), user: 'root', environment: XP5K::Config[:openstack_env]) do
+        cmd = []
+        cmd << %{neutron net-create public --shared --provider:physical_network external --provider:network_type flat --router:external True}
+        cmd << %{neutron net-create private}
+        cmd << %{neutron subnet-create public 10.156.0.0/14 --name public-subnet --allocation-pool start=10.158.20.10,end=10.158.20.100 --dns-nameserver 172.16.111.118 --gateway 10.159.255.254  --disable-dhcp}
+        cmd << %{neutron subnet-create private 192.168.1.0/24 --name private-subnet --allocation-pool start=192.168.1.10,end=192.168.1.100}
+        cmd << %{neutron router-create main_router}
+        cmd << %{neutron router-gateway-set main_router public}
+        cmd << %{neutron router-interface-add main_router private-subnet}
+        cmd
       end
     end
 
