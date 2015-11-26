@@ -32,7 +32,7 @@ class scenario::openstack::nova (
       admin_password                       => $admin_password,
       identity_uri                         => 'http://127.0.0.1:35357/',
       osapi_v3                             => true,
-      neutron_metadata_proxy_shared_secret => 'a_big_secret',
+      neutron_metadata_proxy_shared_secret => $admin_password,
   }
 
   class { '::nova::cert': }
