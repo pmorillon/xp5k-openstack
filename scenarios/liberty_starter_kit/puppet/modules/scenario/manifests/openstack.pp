@@ -8,9 +8,9 @@ class scenario::openstack (
   String $primary_interface = $scenario::openstack::params::primary_interface
 ) inherits scenario::openstack::params {
 
-
   class { 'scenario::openstack::mysql': }
   class { 'scenario::openstack::rabbitmq': }
+  class { 'scenario::openstack::horizon': }
 
   class {
     'scenario::openstack::keystone':

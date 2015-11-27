@@ -33,4 +33,11 @@ class scenario::openstack::glance (
     keystone_password   => $admin_password,
   }
 
+  class { '::glance::notify::rabbitmq':
+    rabbit_userid       => 'glance',
+    rabbit_password     => 'an_even_bigger_secret',
+    rabbit_host         => '127.0.0.1',
+    notification_driver => 'messagingv2',
+  }
+
 }

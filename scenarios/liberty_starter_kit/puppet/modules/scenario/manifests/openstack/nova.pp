@@ -59,21 +59,4 @@ class scenario::openstack::nova (
     neutron_admin_auth_url => 'http://127.0.0.1:35357/v2.0',
   }
 
-  class { 'memcached':
-    listen_ip => '127.0.0.1',
-    tcp_port  => '11211',
-    udp_port  => '11211',
-  }
-
-  class { '::horizon':
-    cache_server_ip    => '127.0.0.1',
-    cache_server_port  => '11211',
-    secret_key         => '12345',
-    #  swift           => false,
-    django_debug       => 'True',
-    api_result_limit   => '2000',
-    vhost_extra_params =>  { 'port' => '8080' };
-  }
-
-
 }
