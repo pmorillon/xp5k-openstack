@@ -10,27 +10,14 @@ namespace :scenario do
     Rake::Task['puppet:agent:run'].execute
     workflow = [
       'scenario:os:rules',
-      'scenario:os:public_bridge'
+      'scenario:os:public_bridge',
+      'scenario:os:horizon',
+      'scenario:os:flavors',
+      'scenario:os:images'
     ]
     workflow.each do |task|
       Rake::Task[task].execute
     end
-  end
-
-  namespace :network do
-
-    desc 'Set secondary interface into reserved VLAN'
-    task :vlan do
-      servers = roles('controller')
-      vlanid = xp.job_with_name(XP5K::Config[:jobname])['resources_by_type']['vlans'].first.to_i
-      root = xp.connection.root.sites[XP5K::Config[:site].to_sym]
-      vlan = root.vlans.find { |item| item['uid'] == vlanid.to_s }
-      # TODO: checks API to determinate secondary interface
-      interfaces = servers.map { |server| server.gsub(/-(\d+)/, '-\1-' + 'eth1') }
-      puts "** Set in vlan #{vlanid} following interfaces : #{interfaces}..."
-      vlan.submit :nodes => interfaces
-    end
-
   end
 
   namespace :hiera do
@@ -79,6 +66,32 @@ namespace :scenario do
         cmd << %{neutron router-gateway-set main_router public}
         cmd << %{neutron router-interface-add main_router private-subnet}
         cmd
+      end
+    end
+
+    desc 'Init horizon theme'
+    task :horizon do
+      on(roles('controller'), user: 'root') do
+        %{/usr/share/openstack-dashboard/manage.py collectstatic --noinput && /usr/share/openstack-dashboard/manage.py compress --force}
+      end
+    end
+
+    desc 'Get images'
+    task :images do
+      on(roles('controller'), user: 'root', environment: XP5K::Config[:openstack_env]) do
+        [
+           %{/usr/bin/wget -q -O /tmp/cirros.img http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img},
+           %{glance image-create --name="Cirros" --disk-format=qcow2 --container-format=bare --property architecture=x86_64 --progress --file /tmp/cirros.img},
+           %{/usr/bin/wget -q -O /tmp/debian.img http://cdimage.debian.org/cdimage/openstack/8.2.0/debian-8.2.0-openstack-amd64.qcow2},
+           %{glance image-create --name="Debian Jessie 64-bit" --disk-format=qcow2 --container-format=bare --property architecture=x86_64 --progress --file /tmp/debian.img}
+        ]
+      end
+    end
+
+    desc 'Add flavors'
+    task :flavors do
+      on(roles('controller'), user: 'root', environment: XP5K::Config[:openstack_env]) do
+        %{nova flavor-create m1.xs auto 2048 6 2 --is-public True}
       end
     end
 
