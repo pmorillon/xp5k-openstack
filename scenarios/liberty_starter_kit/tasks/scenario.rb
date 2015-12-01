@@ -91,7 +91,7 @@ namespace :scenario do
     desc 'Add flavors'
     task :flavors do
       on(roles('controller'), user: 'root', environment: XP5K::Config[:openstack_env]) do
-        %{nova flavor-create m1.xs auto 2048 6 2 --is-public True}
+        %{nova flavor-create m1.xs auto 2048 4 2 --is-public True}
       end
     end
 
