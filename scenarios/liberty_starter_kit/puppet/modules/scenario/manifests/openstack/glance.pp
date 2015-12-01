@@ -10,9 +10,27 @@ class scenario::openstack::glance (
     password => 'glance',
   }
 
+  file {
+    '/tmp/glance':
+      ensure  => directory,
+      owner   => glance,
+      group   => glance,
+      require => Package['glance-api'];
+    '/tmp/glance/images':
+      ensure  => directory,
+      owner   => glance,
+      group   => glance,
+      require => File['/tmp/glance'];
+  }
+
   include ::glance
-  include ::glance::backend::file
   include ::glance::client
+
+  class {
+    '::glance::backend::file':
+      filesystem_store_datadir => '/tmp/glance/images',
+      require                  => File['/tmp/glance/images'];
+  }
 
   class { '::glance::keystone::auth':
     password => $admin_password,
