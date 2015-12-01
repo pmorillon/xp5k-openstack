@@ -5,7 +5,7 @@ def upload_bootstrap_env(host)
   sh %{mkdir -p /tmp/xp5k/xp5k-openstack/bootstrap/{hieradata,modules}}
   sh %{rsync -a --delete provision/puppet/modules/ /tmp/xp5k/xp5k-openstack/bootstrap/modules }
   sh %{rsync -a --delete scenarios/#{XP5K::Config[:scenario]}/hiera/generated/ /tmp/xp5k/xp5k-openstack/bootstrap/hieradata }
-  sh %{cd /tmp/xp5k/xp5k-openstack && tar -cf - bootstrap/ | ssh#{SSH_CONFIGFILE_OPT} root@#{host} 'cd /etc/puppetlabs/code/environments && tar xvf -'}
+  sh %{cd /tmp/xp5k/xp5k-openstack && tar -cf - bootstrap/ | ssh#{SSH_CONFIGFILE_OPT} root@#{host} 'cd /etc/puppetlabs/code/environments && tar xf -'}
 end
 
 
@@ -86,10 +86,10 @@ EOF
     desc 'Upload Puppet modules and hiera database'
     task :upload => [:get, 'puppet:hiera:generate'] do
       puppetserver_fqdn = roles('puppetserver').first
-      sh %{cd provision/puppet/modules && tar -cf - . | ssh#{SSH_CONFIGFILE_OPT} root@#{puppetserver_fqdn} 'cd /etc/puppetlabs/code/environments/production/modules && tar xvf -'}
-      sh %{cd scenarios/#{XP5K::Config[:scenario]}/puppet/modules-openstack && tar -cf - . | ssh#{SSH_CONFIGFILE_OPT} root@#{puppetserver_fqdn} 'cd /etc/puppetlabs/code/environments/production/modules-openstack && tar xvf -'}
-      sh %{cd scenarios/#{XP5K::Config[:scenario]}/puppet/modules && tar -cf - . | ssh#{SSH_CONFIGFILE_OPT} root@#{puppetserver_fqdn} 'cd /etc/puppetlabs/code/environments/production/modules-scenario && tar xvf -'}
-      sh %{cd scenarios/#{XP5K::Config[:scenario]}/hiera/generated && tar -cf - . | ssh#{SSH_CONFIGFILE_OPT} root@#{puppetserver_fqdn} 'cd /etc/puppetlabs/code/environments/production/hieradata && tar xvf -'}
+      sh %{cd provision/puppet/modules && tar -cf - . | ssh#{SSH_CONFIGFILE_OPT} root@#{puppetserver_fqdn} 'cd /etc/puppetlabs/code/environments/production/modules && tar xf -'}
+      sh %{cd scenarios/#{XP5K::Config[:scenario]}/puppet/modules-openstack && tar -cf - . | ssh#{SSH_CONFIGFILE_OPT} root@#{puppetserver_fqdn} 'cd /etc/puppetlabs/code/environments/production/modules-openstack && tar xf -'}
+      sh %{cd scenarios/#{XP5K::Config[:scenario]}/puppet/modules && tar -cf - . | ssh#{SSH_CONFIGFILE_OPT} root@#{puppetserver_fqdn} 'cd /etc/puppetlabs/code/environments/production/modules-scenario && tar xf -'}
+      sh %{cd scenarios/#{XP5K::Config[:scenario]}/hiera/generated && tar -cf - . | ssh#{SSH_CONFIGFILE_OPT} root@#{puppetserver_fqdn} 'cd /etc/puppetlabs/code/environments/production/hieradata && tar xf -'}
     end
   end
 
