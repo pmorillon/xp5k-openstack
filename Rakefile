@@ -32,6 +32,7 @@ XP5K::Config[:computes]       ||= 1
 XP5K::Config[:notification]   ||= false
 XP5K::Config[:jobname]        ||= 'xp5k_openstack'
 XP5K::Config[:puppet_release] ||= 4
+XP5K::Config[:site]           ||= 'rennes'
 
 XP5K::Config[:openstack_env]  ||= {
   OS_USERNAME: 'admin',
