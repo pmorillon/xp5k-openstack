@@ -99,9 +99,9 @@ EOF
     task :generate do
       templates_dir = "scenarios/#{XP5K::Config[:scenario]}/hiera/templates"
       generated_dir = "scenarios/#{XP5K::Config[:scenario]}/hiera/generated"
-      sh %{cd #{generated_dir} && rm -rf nodes}
-      if not File.exists?(generated_dir + "/nodes")
-        mkdir generated_dir + "/nodes"
+      if File.exists?(generated_dir)
+        rm_rf generated_dir
+        mkdir_p generated_dir + "/nodes"
       end
       XP5K::Role.list.each do |role|
         if File.exists?(templates_dir + "/nodes/#{role.name}.yaml")
