@@ -49,8 +49,17 @@ namespace :scenario do
 
     desc 'Configure public bridge'
     task :public_bridge do
+      controllerHostname = roles('controller').first.split('.').first
+      clusterName = controllerHostname.split('-').first
+      restfullyDatas = xp.connection.root
+      .sites[XP5K::Config[:site].to_sym]
+      .clusters[clusterName.to_sym]
+      .nodes.select { |i| i['uid'] == controllerHostname }.first
+      device = restfullyDatas['network_adapters'].select { |interface|
+        interface['mounted'] == true
+      }.first['device']
       on(roles('controller'), user: 'root') do
-        %{ ovs-vsctl add-port br-ex eth0 && ip addr flush eth0 && dhclient -nw br-ex }
+        %{ ovs-vsctl add-port br-ex #{device} && ip addr flush #{device} && dhclient -nw br-ex }
       end
     end
 
