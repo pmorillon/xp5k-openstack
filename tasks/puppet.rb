@@ -32,8 +32,8 @@ namespace :puppet do
         cmd << "apt-get update && apt-get install -y lsb-release #{agent_pkg_name}"
         env = <<EOF
 echo 'http_proxy=http://proxy:3128
-https_proxy=$https_proxy
-ftp_proxy=$https_proxy
+https_proxy=$http_proxy
+ftp_proxy=$http_proxy
 no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com,.grid5000.fr"' > /etc/environment
 EOF
         cmd << env
