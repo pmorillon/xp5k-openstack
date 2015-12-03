@@ -5,11 +5,23 @@
 require 'xp5k'
 require 'xp5k/rake'
 require 'hiera'
+require 'ipaddr'
 
 
 # Constants
 #
 SSH_CONFIGFILE_OPT = XP5K::Config[:ssh_config].nil? ? "" : " -F " + XP5K::Config[:ssh_config]
+G5K_SUBNETS = {
+  rennes: { cidr: '10.156.0.0/14', gateway: '10.159.255.254' },
+  nantes: { cidr: '10.176.0.0/14', gateway: '10.179.255.254' },
+  lille: { cidr: '10.136.0.0/14', gateway: '10.139.255.254' },
+  reims: { cidr: '10.168.0.0/14', gateway: '10.171.255.254' },
+  nancy: { cidr: '10.144.0.0/14', gateway: '10.147.255.254' },
+  luxembourg: { cidr: '10.172.0.0/14', gateway: '10.175.255.254' },
+  lyon: { cidr: '10.140.0.0/14', gateway: '10.143.255.254' },
+  grenoble: { cidr: '10.132.0.0/14', gateway: '10.135.255.254' },
+  sophia: { cidr: '10.164.0.0/14', gateway: '10.167.255.254' },
+}
 
 
 # Load ./xp.conf file
@@ -40,6 +52,7 @@ XP5K::Config[:openstack_env]  ||= {
   OS_TENANT_NAME: 'openstack',
   OS_AUTH_URL: 'http://127.0.0.1:5000/v2.0'
 }
+
 
 # Definitions
 #

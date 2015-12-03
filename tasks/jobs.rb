@@ -1,6 +1,6 @@
 # XP5K job
 #
-resources = [] << %{{type='kavlan-local'}/vlan=1+{ethnb='2'}/nodes=2+slash_18=1,walltime=#{XP5K::Config[:walltime]}}
+resources = [] << %{{type='kavlan-local'}/vlan=1+{ethnb='2'}/nodes=2+slash_22=1,walltime=#{XP5K::Config[:walltime]}}
 roles = [
   XP5K::Role.new({
     name: 'puppetserver',
