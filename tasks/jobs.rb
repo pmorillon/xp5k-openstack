@@ -1,18 +1,14 @@
 # XP5K job
 #
-resources = [] << %{{type='kavlan-local'}/vlan=1+{ethnb='2'}/nodes=2+slash_22=1,walltime=#{XP5K::Config[:walltime]}}
+resources = [] << %{{type='kavlan-local'}/vlan=1+/nodes=1+slash_22=1,walltime=#{XP5K::Config[:walltime]}}
 roles = [
   XP5K::Role.new({
     name: 'puppetserver',
     size: 1
-  }),
-  XP5K::Role.new({
-    name: 'controller',
-    size: 1
   })
 ]
 
-job_description = {
+@job_def = {
   resources:  resources,
   site:       XP5K::Config[:site],
   types:      ['deploy'],
@@ -21,8 +17,8 @@ job_description = {
   command:    'sleep 186400'
 }
 
-job_description[:reservation] = XP5K::Config[:reservation] unless XP5K::Config[:reservation].nil?
-xp.define_job(job_description)
+@job_def[:reservation] = XP5K::Config[:reservation] unless XP5K::Config[:reservation].nil?
+
 
 # Job management tasks
 #

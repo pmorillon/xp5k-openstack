@@ -1,8 +1,37 @@
 # Scenario dedicated Rake task
 #
 
+# Override OAR resources (tasks/jobs.rb)
+# We uses 2 nodes (1 puppetserver and 1 controller) and a subnet for floating public IPs
+#
+resources = [] << %{/nodes=2+slash_22=1,walltime=#{XP5K::Config[:walltime]}}
+@job_def[:resources] = resources
+@job_def[:roles] << XP5K::Role.new({
+  name: 'controller',
+  size: 1
+})
+
+
+# Override role 'all' (tasks/roles.rb)
+#
+role 'all' do
+  roles 'puppetserver', 'controller'
+end
+
+
+# Define OAR job (required)
+#
+xp.define_job(@job_def)
+
+
+# Define Kadeploy deployment (required)
+#
+xp.define_deployment(@deployment_def)
+
+
 namespace :scenario do
 
+  # Required task
   desc 'Main task called at the end of `run` task'
   task :main do
     ENV['host'] = 'controller'
