@@ -102,6 +102,8 @@ EOF
       if File.exists?(generated_dir)
         rm_rf generated_dir
         mkdir_p generated_dir + "/nodes"
+      else
+        mkdir_p generated_dir + "/nodes"
       end
       XP5K::Role.list.each do |role|
         if File.exists?(templates_dir + "/nodes/#{role.name}.yaml")
