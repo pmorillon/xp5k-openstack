@@ -93,8 +93,8 @@ task :run do
     'grid5000:jobs',
     'grid5000:deploy',
     'puppet:agent:install',
-    'puppet:server:bootstrap',
     'puppet:hiera:generate',
+    'puppet:server:bootstrap',
     'puppet:modules:get',
     'puppet:modules:upload'
   ]
