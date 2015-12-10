@@ -1,9 +1,5 @@
 #/bin/bash
 
-export http_proxy=http://proxy:3128
-export https_proxy=http://proxy:3128
-export no_proxy="api.grid5000.fr"
-
 export GEM_HOME=$(pwd)/.gem
 export GEM_PATH=$GEM_HOME/gems
 
