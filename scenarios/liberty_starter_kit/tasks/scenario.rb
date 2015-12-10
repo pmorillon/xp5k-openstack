@@ -36,6 +36,7 @@ namespace :scenario do
   task :main do
     ENV['host'] = 'controller'
     Rake::Task['scenario:hiera:update'].execute
+    Rake::Task['scenario:os:patch'].execute
     Rake::Task['puppet:agent:run'].execute
     workflow = [
       'scenario:os:rules',
@@ -138,6 +139,11 @@ namespace :scenario do
       on(roles('controller'), user: 'root', environment: XP5K::Config[:openstack_env]) do
         %{nova flavor-create m1.xs auto 2048 4 2 --is-public True}
       end
+    end
+
+    desc 'Patch horizon Puppet module'
+    task :patch do
+      sh %{sed -i '' '24s/apache2/httpd/' scenarios/liberty_starter_kit/puppet/modules-openstack/horizon/manifests/params.pp}
     end
 
   end
