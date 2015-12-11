@@ -37,6 +37,7 @@ namespace :scenario do
     ENV['host'] = 'controller'
     Rake::Task['scenario:hiera:update'].execute
     Rake::Task['scenario:os:patch'].execute
+    Rake::Task['puppet:modules:upload'].execute
     Rake::Task['puppet:agent:run'].execute
     workflow = [
       'scenario:os:rules',
