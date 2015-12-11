@@ -1,5 +1,3 @@
-#/bin/bash
-
 export GEM_HOME=$(pwd)/.gem
 export GEM_PATH=$GEM_HOME/gems
 
