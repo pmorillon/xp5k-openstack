@@ -8,3 +8,5 @@ xp.conf
 # Scenarios
 scenarios/*/hiera/generated
 scenarios/*/puppet/modules-openstack
+scenario/*
+!scenario/liberty_starter_kit
