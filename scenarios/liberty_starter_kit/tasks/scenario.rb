@@ -4,7 +4,7 @@
 # Override OAR resources (tasks/jobs.rb)
 # We uses 2 nodes (1 puppetserver and 1 controller) and a subnet for floating public IPs
 #
-resources = [] << %{/nodes=2+slash_22=1,walltime=#{XP5K::Config[:walltime]}}
+resources = [] << %{{virtual='ivt'}/nodes=2+slash_22=1,walltime=#{XP5K::Config[:walltime]}}
 @job_def[:resources] = resources
 @job_def[:roles] << XP5K::Role.new({
   name: 'controller',
