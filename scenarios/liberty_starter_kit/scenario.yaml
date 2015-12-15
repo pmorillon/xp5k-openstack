@@ -1,8 +1,0 @@
----
-kadeploy_environment: 'ubuntu-x64-1404'
-oar_resources: '/nodes=2'
-xp5k_roles:
-- name: 'controller'
-  size: 1
-
-
