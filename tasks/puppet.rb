@@ -41,7 +41,7 @@ EOF
     end
 
     desc "Puppet Puppet agent on node host=<role|FQDN>"
-    task :run do
+    task :run => ['puppet:modules:upload'] do
       hosts = parse_host()
       puppetserver = roles('puppetserver').first
       on hosts, :user => 'root' do
