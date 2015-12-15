@@ -32,6 +32,11 @@ class scenario::openstack (
       admin_password => $admin_password;
   }
 
+  class {
+    'openstack_extras::auth_file':
+      password => $admin_password;
+  }
+
   package {
     'syslinux':
       ensure => installed;
