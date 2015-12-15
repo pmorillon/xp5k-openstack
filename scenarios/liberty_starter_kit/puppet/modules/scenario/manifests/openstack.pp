@@ -34,7 +34,8 @@ class scenario::openstack (
 
   class {
     'openstack_extras::auth_file':
-      password => $admin_password;
+      password => $admin_password,
+      path     => '/root/openstack-openrc.sh';
   }
 
   package {
