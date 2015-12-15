@@ -10,3 +10,10 @@ scenarios/*/hiera/generated
 scenarios/*/puppet/modules-openstack
 scenario/*
 !scenario/liberty_starter_kit
+
+# Rubygems
+.gem/
+
+# Restfully
+.restfully/
+
