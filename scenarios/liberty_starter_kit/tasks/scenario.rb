@@ -45,11 +45,32 @@ namespace :scenario do
       'scenario:os:horizon',
       'scenario:os:flavors',
       'scenario:os:images',
-      'scenario:os:network'
+      'scenario:os:network',
+      'scenario:horizon_access'
     ]
     workflow.each do |task|
       Rake::Task[task].execute
     end
+  end
+
+  desc 'Show SSH configuration to access Horizon'
+  task :horizon_access do
+    puts '** Launch this script on your local computer and open http://localhost:8080 on your navigator'
+    puts '---'
+    script = %{cat > /tmp/openstack_ssh_config <<EOF\n}
+    script += %{Host *.grid5000.fr\n}
+    script += %{  User #{ENV['USER']}\n}
+    script += %{  ProxyCommand ssh -q #{ENV['USER']}@194.254.60.4 nc -w1 %h %p # Access South\n}
+    script += %{EOF\n}
+    script += %{ssh -F /tmp/openstack_ssh_config -N -L 8080:#{roles('controller').first}:8080 #{ENV['USER']}@frontend.#{XP5K::Config[:site]}.grid5000.fr &\n}
+    script += %{HTTP_PID=$!\n}
+    script += %{ssh -F /tmp/openstack_ssh_config -N -L 6080:#{roles('controller').first}:6080 #{ENV['USER']}@frontend.#{XP5K::Config[:site]}.grid5000.fr &\n}
+    script += %{CONSOLE_PID=$!\n}
+    script += %{trap 'kill -9 $HTTP_PID && kill -9 $CONSOLE_PID' 2\n}
+    script += %{http://localhost:8080\n}
+    script += %{wait\n}
+    puts script
+    puts '---'
   end
 
   namespace :hiera do
@@ -145,7 +166,7 @@ namespace :scenario do
 
     desc 'Patch horizon Puppet module'
     task :patch do
-      sh %{sed -i '24s/apache2/httpd/' scenarios/liberty_starter_kit/puppet/modules-openstack/horizon/manifests/params.pp}
+      sh %{sed -i '' '24s/apache2/httpd/' scenarios/liberty_starter_kit/puppet/modules-openstack/horizon/manifests/params.pp}
     end
 
   end
