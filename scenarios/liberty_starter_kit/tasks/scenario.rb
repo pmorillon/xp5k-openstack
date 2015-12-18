@@ -166,7 +166,7 @@ namespace :scenario do
 
     desc 'Patch horizon Puppet module'
     task :patch do
-      sh %{sed -i '' '24s/apache2/httpd/' scenarios/liberty_starter_kit/puppet/modules-openstack/horizon/manifests/params.pp}
+      sh %{sed -i '24s/apache2/httpd/' scenarios/liberty_starter_kit/puppet/modules-openstack/horizon/manifests/params.pp}
     end
 
   end
