@@ -1,11 +1,11 @@
 # Definitions
 #
 def upload_bootstrap_env(host)
-  sh %{rm -rf /tmp/xp5k/xp5k-openstack/bootstrap}
-  sh %{mkdir -p /tmp/xp5k/xp5k-openstack/bootstrap/{hieradata,modules}}
-  sh %{rsync -a --delete provision/puppet/modules/ /tmp/xp5k/xp5k-openstack/bootstrap/modules }
-  sh %{rsync -a --delete scenarios/#{XP5K::Config[:scenario]}/hiera/generated/ /tmp/xp5k/xp5k-openstack/bootstrap/hieradata }
-  sh %{cd /tmp/xp5k/xp5k-openstack && tar -cf - bootstrap/ | ssh#{SSH_CONFIGFILE_OPT} root@#{host} 'cd /etc/puppetlabs/code/environments && tar xf -'}
+  sh %{rm -rf /tmp/xp5k_$USER/xp5k-openstack/bootstrap}
+  sh %{mkdir -p /tmp/xp5k_$USER/xp5k-openstack/bootstrap/{hieradata,modules}}
+  sh %{rsync -a --delete provision/puppet/modules/ /tmp/xp5k_$USER/xp5k-openstack/bootstrap/modules }
+  sh %{rsync -a --delete scenarios/#{XP5K::Config[:scenario]}/hiera/generated/ /tmp/xp5k_$USER/xp5k-openstack/bootstrap/hieradata }
+  sh %{cd /tmp/xp5k_$USER/xp5k-openstack && tar -cf - bootstrap/ | ssh#{SSH_CONFIGFILE_OPT} root@#{host} 'cd /etc/puppetlabs/code/environments && tar xf -'}
 end
 
 
