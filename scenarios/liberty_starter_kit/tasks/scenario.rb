@@ -67,7 +67,7 @@ namespace :scenario do
     script += %{ssh -F /tmp/openstack_ssh_config -N -L 6080:#{roles('controller').first}:6080 #{ENV['USER']}@frontend.#{XP5K::Config[:site]}.grid5000.fr &\n}
     script += %{CONSOLE_PID=$!\n}
     script += %{trap 'kill -9 $HTTP_PID && kill -9 $CONSOLE_PID' 2\n}
-    script += %{http://localhost:8080\n}
+    script += %{echo 'http://localhost:8080'\n}
     script += %{wait\n}
     puts script
     puts '---'
