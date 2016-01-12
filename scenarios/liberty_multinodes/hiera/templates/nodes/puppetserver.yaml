@@ -1,0 +1,6 @@
+---
+classes:
+- xp::puppet::server
+puppet::server::autosign:
+- host1
+
