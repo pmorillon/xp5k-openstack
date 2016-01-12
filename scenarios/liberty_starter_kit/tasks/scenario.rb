@@ -166,7 +166,15 @@ namespace :scenario do
 
     desc 'Patch horizon Puppet module'
     task :patch do
-      sh %{sed -i '24s/apache2/httpd/' scenarios/liberty_starter_kit/puppet/modules-openstack/horizon/manifests/params.pp}
+      os = %x[uname].chomp
+      case os
+      when 'Linux'
+        sh %{sed -i '24s/apache2/httpd/' scenarios/liberty_starter_kit/puppet/modules-openstack/horizon/manifests/params.pp}
+      when 'Darwin'
+        sh %{sed -i '' '24s/apache2/httpd/' scenarios/liberty_starter_kit/puppet/modules-openstack/horizon/manifests/params.pp}
+      else
+        puts "Patch not applied."
+      end
     end
 
   end
