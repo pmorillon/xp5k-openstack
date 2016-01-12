@@ -9,9 +9,4 @@ class xp {
       before => Stage['main'];
   }
 
-  class {
-    'xp::proxy':
-      stage => setup;
-  }
-
 }
