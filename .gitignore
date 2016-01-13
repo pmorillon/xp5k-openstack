@@ -10,6 +10,7 @@ scenarios/*/hiera/generated
 scenarios/*/puppet/modules-openstack
 scenario/*
 !scenario/liberty_starter_kit
+!scenario/liberty_multinodes
 
 # Rubygems
 .gem/
