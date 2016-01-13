@@ -52,7 +52,7 @@ __Notes__ : Ensure that you can connect to other frontends through SSH without p
 rake run
 ```
 
-__Notes__ : ☕️ ☕️ (estimated time: 20-30 minutes)
+__Notes__ : ☕️ ☕️ (estimated time: 20-30 minutes). To kill jobs before the end of the experiment, use task `grid5000:clean`. Before restarting a new experiment `.xp_cache` file should be removed.
 
 * Connect to the controller through SSH :
 
