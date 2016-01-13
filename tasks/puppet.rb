@@ -27,16 +27,10 @@ namespace :puppet do
             raise "Puppet release #{XP5K::Config[:puppet_release]} not supported."
         end
         url = "http://apt.puppetlabs.com/#{repo_pkg}"
-        cmd = [] << "http_proxy=http://proxy:3128 wget -q #{url} && dpkg -i #{repo_pkg}"
+        cmd = [] << "wget -q #{url} && dpkg -i #{repo_pkg}"
         cmd << "rm #{repo_pkg}"
         cmd << "apt-get update && apt-get install -y lsb-release #{agent_pkg_name}"
-        env = <<EOF
-echo 'http_proxy=http://proxy:3128
-https_proxy=$http_proxy
-ftp_proxy=$http_proxy
-no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com,.grid5000.fr"' > /etc/environment
-EOF
-        cmd << env
+        cmd << "echo '' > /etc/environment"
       end
     end
 
