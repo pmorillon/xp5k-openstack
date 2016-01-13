@@ -3,7 +3,7 @@
 #
 
 require 'xp5k'
-require 'xp5k/rake'
+require 'xp5k/rake' # Extend rake DSL to add role method and on method (ssh command // execution)
 require 'hiera'
 require 'ipaddr'
 
