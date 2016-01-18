@@ -129,8 +129,8 @@ namespace :scenario do
         cmd = []
         cmd << %{neutron net-create public --shared --provider:physical_network external --provider:network_type flat --router:external True}
         cmd << %{neutron net-create private}
-        cmd << %{neutron subnet-create public #{publicSubnet[:cidr]} --name public-subnet --allocation-pool start=#{publicPoolStart},end=#{publicPoolStop} --dns-nameserver $(gethostip -d dns) --gateway #{publicSubnet[:gateway]}  --disable-dhcp}
-        cmd << %{neutron subnet-create private #{privateCIDR} --name private-subnet --allocation-pool start=#{privatePoolStart},end=#{privatePoolStop}}
+        cmd << %{neutron subnet-create public #{publicSubnet[:cidr]} --name public-subnet --allocation-pool start=#{publicPoolStart},end=#{publicPoolStop} --gateway #{publicSubnet[:gateway]}  --disable-dhcp}
+        cmd << %{neutron subnet-create private #{privateCIDR} --name private-subnet --dns-nameserver $(gethostip -d dns) --allocation-pool start=#{privatePoolStart},end=#{privatePoolStop}}
         cmd << %{neutron router-create main_router}
         cmd << %{neutron router-gateway-set main_router public}
         cmd << %{neutron router-interface-add main_router private-subnet}
