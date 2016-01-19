@@ -18,7 +18,7 @@ __Notes__ : Openstack delpoyment is quite long, it would be safer to continue in
 
 ```Shell
 cd xp5k-openstack
-source setup_frontend.sh
+source setup_env.sh
 gem install bundler
 bundle install
 ```
@@ -31,7 +31,7 @@ __Notes__ : use `rehash` command if you use `zsh` in order to update _$PATH_ (if
 
 ```
 cd xp5k-openstack
-source setup_frontend.sh
+source setup_env.sh
 ```
 
 * Configure experiment. Create a file `xp.conf` :
