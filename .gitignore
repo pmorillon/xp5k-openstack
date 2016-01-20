@@ -8,9 +8,9 @@ xp.conf
 # Scenarios
 scenarios/*/hiera/generated
 scenarios/*/puppet/modules-openstack
-scenario/*
-!scenario/liberty_starter_kit
-!scenario/liberty_multinodes
+scenarios/*
+!scenarios/liberty_starter_kit
+!scenarios/liberty_multinodes
 
 # Rubygems
 .gem/
