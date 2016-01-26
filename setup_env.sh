@@ -14,3 +14,7 @@ fi
 
 export RESTFULLY_CONFIG=$(pwd)/.restfully/api.grid5000.fr.yml
 
+unset http_proxy
+unset https_proxy
+unset ftp_proxy
+
