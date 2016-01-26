@@ -55,7 +55,6 @@ namespace :scenario do
 
   desc 'Show SSH configuration to access Horizon'
   task :horizon_access do
-    puts '** Launch this script on your local computer and open http://localhost:8080 on your navigator'
     puts '---'
     script = %{cat > /tmp/openstack_ssh_config <<EOF\n}
     script += %{Host *.grid5000.fr\n}
@@ -71,6 +70,10 @@ namespace :scenario do
     script += %{wait\n}
     puts script
     puts '---'
+    File.open('./dashboard_tunnels.sh', 'w') do |file|
+      file.puts script
+    end
+    puts '** Script ./dashboard_tunnels.sh generated (to execute on your computer).'
   end
 
   namespace :hiera do

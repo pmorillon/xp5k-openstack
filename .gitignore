@@ -12,6 +12,8 @@ scenarios/*
 !scenarios/liberty_starter_kit
 !scenarios/liberty_multinodes
 
+dashboard_tunnels.sh
+
 # Rubygems
 .gem/
 
