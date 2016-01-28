@@ -8,8 +8,9 @@ class scenario::openstack::params {
 
   $controller_public_address = hiera("scenario::openstack::controller_public_address")
   $storage_public_address = hiera("scenario::openstack::storage_public_address")
+
   $public_network = hiera("scenario::openstack::public_network")
-  $private_network = hiera("scenario::openstack::private_network")
+  $data_network = hiera("scenario::openstack::data_network")
 
 
   case $::osfamily {
