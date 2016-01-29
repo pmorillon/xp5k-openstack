@@ -6,7 +6,6 @@ class scenario::openstack::controller(
   String $storage_public_address = $scenario::openstack::params::storage_public_address,
 ) inherits scenario::openstack::params {
 
-
   class { 'scenario::openstack::mysql':}
   class { 'scenario::openstack::rabbitmq': }
   class { 'scenario::openstack::horizon': }

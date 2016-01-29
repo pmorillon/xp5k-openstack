@@ -11,10 +11,25 @@ XP5K::Config[:walltime]   ||= '1:00:00'
 XP5K::Config[:cluster]    ||= ''
 XP5K::Config[:vlantype]   ||= 'kavlan-local'
 XP5K::Config[:computes]   ||= 1
-cluster = "and cluster='" + XP5K::Config[:cluster] + "'" if !XP5K::Config[:cluster].empty?
+XP5K::Config[:interfaces] ||= 1
+
+oar_cluster = ""
+oar_cluster = "and cluster='" + XP5K::Config[:cluster] + "'" if !XP5K::Config[:cluster].empty?
+# vlan reservation 
+# the first interface is put in the production network
+# the other ones are put a dedicated vlan thus we need #interfaces - 1 vlans
+oar_vlan = ""
+oar_vlan = "{type='#{XP5K::Config[:vlantype]}'}/vlan=#{XP5K::Config[:interfaces] - 1}" if XP5K::Config[:interfaces] >= 2
 
 nodes = 4 + XP5K::Config[:computes].to_i
-resources = [] << %{{type='#{XP5K::Config[:vlantype]}'}/vlan=1+{ethnb='2' and virtual != 'none' #{cluster}}/nodes=#{nodes}+slash_22=1,walltime=#{XP5K::Config[:walltime]}}
+
+resources = [] << 
+[ 
+  "#{oar_vlan}",
+  "{ethnb >= #{XP5K::Config[:interfaces]} and virtual != 'none' #{oar_cluster}}/nodes=#{nodes}",
+  "slash_22=1, walltime=#{XP5K::Config[:walltime]}"
+].join("+")
+
 @job_def[:resources] = resources
 @job_def[:roles] << XP5K::Role.new({
   name: 'controller',
@@ -103,42 +118,11 @@ namespace :scenario do
     end
  end
   
-  def update_common_with_networks
-      common = YAML.load_file("scenarios/#{XP5K::Config[:scenario]}/hiera/generated/common.yaml")
-      vlanid = xp.job_with_name("#{XP5K::Config[:jobname]}")['resources_by_type']['vlans'].first.to_i
-      private_network = G5K_NETWORKS[XP5K::Config[:site]]["vlans"][vlanid]
-      public_network = G5K_NETWORKS[XP5K::Config[:site]]["subnet"]["cidr"]
-      common['scenario::openstack::public_network'] = public_network
-      common['scenario::openstack::private_network'] = private_network 
-      File.open("scenarios/#{XP5K::Config[:scenario]}/hiera/generated/common.yaml", 'w') do |file|
-        file.puts common.to_yaml
-      end
-  end
-
-  def update_common_with_ips() 
-      interfaces = get_node_interfaces
-      common = YAML.load_file("scenarios/#{XP5K::Config[:scenario]}/hiera/generated/common.yaml")
-      common['scenario::openstack::admin_password'] = XP5K::Config[:openstack_env][:OS_PASSWORD]
-      # TODO loop
-      controller = roles('controller').first
-      common['scenario::openstack::controller_public_address'] = interfaces[controller]["public"]["ip"]
-      storage = roles('storage').first
-      common['scenario::openstack::storage_public_address'] = interfaces[storage]["public"]["ip"]
-     # network = roles('network').first
-     # common['scenario::openstack::network_public_address'] = interfaces[network]["public"]["ip"]
-
-      File.open("scenarios/#{XP5K::Config[:scenario]}/hiera/generated/common.yaml", 'w') do |file|
-        file.puts common.to_yaml
-      end
-  end
-
-
 
   namespace :hiera do
 
     desc 'update common.yaml with network information (controller/storage ips, networks adresses)'
     task :update do
-      update_common_with_ips()
       update_common_with_networks()
       # upload the new common.yaml
       puppetserver_fqdn = roles('puppetserver').first
@@ -169,7 +153,10 @@ namespace :scenario do
     desc 'Configure public bridge'
     task :public_bridge do
       on(roles('network'), user: 'root') do
-        %{ ovs-vsctl add-port br-ex eth0 && ip addr flush eth0 && dhclient -nw br-ex }
+        interfaces = get_node_interfaces
+        network = roles('network').first
+        device = interfaces[network]["public"]["device"]
+        %{ ovs-vsctl add-port br-ex #{device} && ip addr flush #{device} && dhclient -nw br-ex }
       end
     end
 
@@ -239,4 +226,37 @@ namespace :scenario do
 
   end
 
+end
+
+def update_common_with_networks
+  interfaces = get_node_interfaces
+  common = YAML.load_file("scenarios/#{XP5K::Config[:scenario]}/hiera/generated/common.yaml")
+  common['scenario::openstack::admin_password'] = XP5K::Config[:openstack_env][:OS_PASSWORD]
+
+  common = YAML.load_file("scenarios/#{XP5K::Config[:scenario]}/hiera/generated/common.yaml")
+  vlanids = xp.job_with_name("#{XP5K::Config[:jobname]}")['resources_by_type']['vlans']
+
+  controller = roles('controller').first
+  common['scenario::openstack::controller_public_address'] = interfaces[controller]["public"]["ip"]
+  storage = roles('storage').first
+  common['scenario::openstack::storage_public_address'] = interfaces[storage]["public"]["ip"]
+
+  # each specific OpenStack network is picked in the reserved vlan
+  # if the number of interfaces is sufficient
+  # TODO handle more than 1 vlan 
+  # 1 for management (in this implementation management is the same as public)
+  # 1 for data 
+  ['data_network'].each_with_index do |network, i| 
+    if (XP5K::Config[:interfaces] > 1)
+     common["scenario::openstack::#{network}"] = G5K_NETWORKS[XP5K::Config[:site]]["vlans"][vlanids[i % vlanids.size].to_i]
+    else
+     common["scenario::openstack::#{network}"] = G5K_NETWORKS[XP5K::Config[:site]]["production"]
+    end
+  end
+
+  common['scenario::openstack::public_network'] = G5K_NETWORKS[XP5K::Config[:site]]["production"]
+
+  File.open("scenarios/#{XP5K::Config[:scenario]}/hiera/generated/common.yaml", 'w') do |file|
+    file.puts common.to_yaml
+  end
 end

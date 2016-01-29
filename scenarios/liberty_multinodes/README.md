@@ -27,12 +27,17 @@ The following parameters are optionnal in the ```xp.conf``` file. If some are no
 default values will bet set for them (see ```tasks/scenario.rb```). Here is an example :
 
 ```
-cluster   'parasilo'
-vlantype  'kavlan'
-computes  '3'
+cluster    'parasilo'
+vlantype   'kavlan'
+computes   3
+interfaces 2
 ```
 
-__Notes__ : The total number of nodes used by the deployment is ```computes + 4```
+__Notes__ :  
+
+* The total number of nodes used by the deployment is ```computes + 4```
+* The number of interfaces to use can be set to 1 or 2 (values above aren't supported) yet : using 1 interface allows you to deploy anywhere on Grid'5000. When using two interfaces the second one will be use for intra-vm communication and will be set on a dedicated vlan.
+
 
 
 ## Openstack configuration

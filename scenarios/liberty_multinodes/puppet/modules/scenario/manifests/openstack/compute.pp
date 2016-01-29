@@ -7,7 +7,7 @@ class scenario::openstack::compute (
   String $admin_password = $scenario::openstack::params::admin_password,
   String $controller_public_address = $scenario::openstack::params::controller_public_address,
   String $storage_public_address = $scenario::openstack::params::storage_public_address,
-  String $data_network = $scenario::openstack::params::private_network
+  String $data_network = $scenario::openstack::params::data_network
 ) inherits scenario::openstack::params {
 
   

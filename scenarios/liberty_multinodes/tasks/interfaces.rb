@@ -32,17 +32,23 @@ def generate_interfaces_cache
         .sites[XP5K::Config[:site].to_sym]
         .clusters[clusterName.to_sym]
         .nodes.select { |n| n['uid'] == nodeName }.first
-      
-      private_interface = restfullyDatas['network_adapters'].select{ |interface| 
-        interface['mountable'] && ( not interface['mounted'])
-      }.first
-      public_interface = restfullyDatas['network_adapters'].select{ |interface| 
-        interface['mountable'] && interface['mounted']
+     
+      # Those interfaces will be put in a dedicated vlan
+      private_interfaces = restfullyDatas['network_adapters'].select{ |na| 
+        na['interface'] == 'Ethernet' && na['mountable'] && ( not na['mounted'])
+      }
+      public_interface = restfullyDatas['network_adapters'].select{ |na| 
+        na['interface'] == 'Ethernet' && na['mountable'] && na['mounted']
       }.first
 
       interfaceMapping[node] = {
-        "public" => {"device" => public_interface["device"], "ip" => public_interface["ip"] },
-        "private" => {"device" => private_interface["device"]},
+        "public" => {
+          "device" => public_interface["device"],
+          "ip"     => public_interface["ip"],
+      },
+        "private" => private_interfaces.map{|p| {
+          "device" => p["device"] 
+        }}
       }
 
     end
@@ -69,35 +75,55 @@ namespace :interfaces do
     generate_interfaces_cache
   end
 
-  desc 'Put second interface in the reserved vlan'
+  # it is assumed that all the nodes have the same number of reserved devices
+  desc 'Put second, third  interfaces in the reserved vlan'
   task :vlan do
+    # get the vlan id
+    vlanids = xp.job_with_name("#{XP5K::Config[:jobname]}")['resources_by_type']['vlans']
+    if (vlanids.nil? or vlanids.empty?)
+      # no vlan, moving to the next task
+      next
+    end
+
     # mapping between nodes and their interfaces (mountable)
     nodesInterfaces = get_node_interfaces
     # holds the node names required to submit into a vlan
     # ex [paranoia-1-eth2, parvance-1-eth1, ...]
-    nodesApiVlan = []
+    nodesApiVlan = Hash.new {|h,k| h[k] = []} 
     # holds the mapping nodeName -> device
-    interfaceMapping = {}
+    interfaceMapping = Hash.new {|h,k| h[k] = []} 
 
     nodesInterfaces.each do |node, devices|
-      # private interface will be set in the vlan
+      # private interfaces will be set in the vlan
       nodeName = node.split('.').first
-      device =  devices['private']['device']
-      nodesApiVlan << "#{nodeName}-#{device}.#{XP5K::Config[:site]}.grid5000.fr"
-      interfaceMapping[node] = device
+      private_devices =  devices['private']
+      private_devices.each_with_index do |priv, di|
+        index = di % vlanids.size
+        nodesApiVlan[vlanids[index].to_i] << "#{nodeName}-#{priv["device"]}.#{XP5K::Config[:site]}.grid5000.fr"
+        interfaceMapping[node] << priv["device"]
+        # keep track of the vlanid associated with this device
+        priv["vlanid"] = vlanids[index]
+      end
     end
-    # get the vlan id
-    vlanid = xp.job_with_name("#{XP5K::Config[:jobname]}")['resources_by_type']['vlans'].first.to_i
-    # put nodes in vlan
+    update_interfaces(nodesInterfaces)
+    # example nodesApiVlan (2 vlans 4 and 5):  
+    # 4 => [parapluie-1-eth1.rennes.grid5000.fr, parapluie-2-eth1.rennes.grid5000.fr],
+    # 5 => [parapluie-3-eth2.rennes.grid5000.fr, parapluie-4-eth2.rennes.grid5000.fr]
+    #
     root = xp.connection.root.sites[XP5K::Config['site'].to_sym]
-    vlan = root.vlans.find { |item| item['uid'] == vlanid.to_s }
-    puts nodesApiVlan.inspect
-    vlan.submit :nodes => nodesApiVlan
+    nodesApiVlan.each do |vlanid, nodes| 
+      vlan = root.vlans.find { |item| item['uid'] == vlanid.to_s }
+      puts ({:nodes => nodes}).inspect
+      vlan.submit :nodes => nodes
+    end
 
-    # restart interfaces on the vlan
-    interfaceMapping.each do |node, device|
-      on(node) do 
-        "dhclient -nw  #{device}"
+    interfaceMapping.each do |node, devices|
+      devices.each do |device| 
+        # TODO open only one connection to renew the all the leases 
+        # of a given node
+         on(node) do 
+          "dhclient -nw  #{device}"
+        end
       end
     end
   end
