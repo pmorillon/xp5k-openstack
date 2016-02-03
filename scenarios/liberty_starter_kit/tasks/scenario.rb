@@ -154,7 +154,7 @@ namespace :scenario do
         [
            %{/usr/bin/wget -q -O /tmp/cirros.img http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img},
            %{glance image-create --name="Cirros" --disk-format=qcow2 --container-format=bare --property architecture=x86_64 --progress --file /tmp/cirros.img},
-           %{/usr/bin/wget -q -O /tmp/debian.img http://cdimage.debian.org/cdimage/openstack/8.2.0/debian-8.2.0-openstack-amd64.qcow2},
+           %{/usr/bin/wget -q -O /tmp/debian.img http://cdimage.debian.org/cdimage/openstack/8.3.0/debian-8.3.0-openstack-amd64.qcow2},
            %{glance image-create --name="Debian Jessie 64-bit" --disk-format=qcow2 --container-format=bare --property architecture=x86_64 --progress --file /tmp/debian.img}
         ]
       end
