@@ -32,4 +32,12 @@ class scenario::openstack::keystone (
     default_domain => 'admin',
   }
 
+  /**
+  * Force the creation of the _member_ role
+  * see https://github.com/pmorillon/xp5k-openstack/issues/4
+  */
+  keystone_role { '_member_':
+    ensure => present,
+  }
+
 }

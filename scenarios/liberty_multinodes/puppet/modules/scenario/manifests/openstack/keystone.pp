@@ -35,7 +35,14 @@ class scenario::openstack::keystone (
     public_url   => "http://${controller_public_address}:5000",
     internal_url => "http://${controller_public_address}:5000",
     admin_url    => "http://${controller_public_address}:35357"
+  }
 
+  /**
+  * Force the creation of the _member_ role
+  * see https://github.com/pmorillon/xp5k-openstack/issues/4
+  */
+  keystone_role { '_member_':
+    ensure => present,
   }
 
 }
