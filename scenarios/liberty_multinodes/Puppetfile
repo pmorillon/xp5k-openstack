@@ -4,10 +4,6 @@ mod 'aodh',
   :git => 'https://git.openstack.org/openstack/puppet-aodh',
   :ref => '7.0.0'
 
-mod 'barbican',
-  :git => 'https://git.openstack.org/openstack/puppet-barbican',
-  :ref => 'master'
-
 mod 'ceilometer',
   :git => 'https://git.openstack.org/openstack/puppet-ceilometer',
   :ref => '7.0.0'
@@ -47,14 +43,6 @@ mod 'keystone',
 mod 'manila',
   :git => 'https://git.openstack.org/openstack/puppet-manila',
   :ref => '7.0.0'
-
-mod 'mistral',
-  :git => 'https://git.openstack.org/openstack/puppet-mistral',
-  :ref => 'master'
-
-mod 'monasca',
-  :git => 'https://git.openstack.org/openstack/puppet-monasca',
-  :ref => 'master'
 
 mod 'murano',
   :git => 'https://git.openstack.org/openstack/puppet-murano',
@@ -98,11 +86,7 @@ mod 'tuskar',
 
 mod 'vswitch',
   :git => 'https://git.openstack.org/openstack/puppet-vswitch',
-  :ref => 'master'
-
-mod 'zaqar',
-  :git => 'https://git.openstack.org/openstack/puppet-zaqar',
-  :ref => 'master'
+  :ref => '3.0.0'
 
 # External modules
 
