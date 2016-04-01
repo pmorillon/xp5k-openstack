@@ -121,7 +121,8 @@ namespace :scenario do
 
     desc 'Configure Openstack network'
     task :network do
-      publicSubnet = G5K_SUBNETS[XP5K::Config[:site].to_sym]
+      site_infos = xp.connection.root.sites[XP5K::Config[:site].to_sym]
+      publicSubnet = site_infos['g5ksubnet']
       reservedSubnet = xp.job_with_name(XP5K::Config[:jobname])['resources_by_type']['subnets'].first
       publicPool = IPAddr.new(reservedSubnet).to_range.to_a[10..100]
       publicPoolStart,publicPoolStop = publicPool.first.to_s,publicPool.last.to_s
@@ -132,7 +133,7 @@ namespace :scenario do
         cmd = []
         cmd << %{neutron net-create public --shared --provider:physical_network external --provider:network_type flat --router:external True}
         cmd << %{neutron net-create private}
-        cmd << %{neutron subnet-create public #{publicSubnet[:cidr]} --name public-subnet --allocation-pool start=#{publicPoolStart},end=#{publicPoolStop} --gateway #{publicSubnet[:gateway]}  --disable-dhcp}
+        cmd << %{neutron subnet-create public #{publicSubnet['network']} --name public-subnet --allocation-pool start=#{publicPoolStart},end=#{publicPoolStop} --gateway #{publicSubnet['gateway']}  --disable-dhcp}
         cmd << %{neutron subnet-create private #{privateCIDR} --name private-subnet --dns-nameserver $(gethostip -d dns) --allocation-pool start=#{privatePoolStart},end=#{privatePoolStop}}
         cmd << %{neutron router-create main_router}
         cmd << %{neutron router-gateway-set main_router public}
