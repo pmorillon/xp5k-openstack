@@ -9,6 +9,7 @@ class scenario::openstack::rabbitmq (
   class { '::rabbitmq':
     delete_guest_user => true,
     package_provider  => $package_provider,
+    package_gpg_key   => 'https://www.rabbitmq.com/rabbitmq-release-signing-key.asc';
   }
   rabbitmq_vhost { '/':
     provider => 'rabbitmqctl',
