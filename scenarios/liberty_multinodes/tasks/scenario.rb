@@ -216,8 +216,10 @@ namespace :scenario do
       case os
       when 'Linux'
         sh %{sed -i '24s/apache2/httpd/' scenarios/liberty_multinodes/puppet/modules-openstack/horizon/manifests/params.pp}
+        sh %{sed -i 's/F78372A06FF50C80464FC1B4F7B8CEA6056E8E56/0A9AF2115F4687BD29803A206B73A36E6026DFCA/' scenarios/liberty_starter_kit/puppet/modules-openstack/rabbitmq/manifests/repo/apt.pp}
       when 'Darwin'
         sh %{sed -i '' '24s/apache2/httpd/' scenarios/liberty_multinodes/puppet/modules-openstack/horizon/manifests/params.pp}
+        sh %{sed -i '' 's/F78372A06FF50C80464FC1B4F7B8CEA6056E8E56/0A9AF2115F4687BD29803A206B73A36E6026DFCA/' scenarios/liberty_starter_kit/puppet/modules-openstack/rabbitmq/manifests/repo/apt.pp}
       else
         puts "Patch not applied."
       end
