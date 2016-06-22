@@ -26,7 +26,7 @@ nodes = 4 + XP5K::Config[:computes].to_i
 resources = [] << 
 [ 
   "#{oar_vlan}",
-  "{ethnb >= #{XP5K::Config[:interfaces]} and virtual != 'none' #{oar_cluster}}/nodes=#{nodes}",
+  "{eth_count >= #{XP5K::Config[:interfaces]} and virtual != 'none' #{oar_cluster}}/nodes=#{nodes}",
   "slash_22=1, walltime=#{XP5K::Config[:walltime]}"
 ].join("+")
 
