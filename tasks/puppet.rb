@@ -29,7 +29,7 @@ namespace :puppet do
         url = "http://apt.puppetlabs.com/#{repo_pkg}"
         cmd = [] << "wget -q #{url} && dpkg -i #{repo_pkg}"
         cmd << "rm #{repo_pkg}"
-        cmd << "apt-get update && apt-get install -y lsb-release #{agent_pkg_name}"
+        cmd << "apt-get update && apt-get install -y eatmydata lsb-release #{agent_pkg_name}"
         cmd << "echo '' > /etc/environment"
       end
     end
@@ -39,10 +39,12 @@ namespace :puppet do
       hosts = parse_host()
       puppetserver = roles('puppetserver').first
       on hosts, :user => 'root' do
-        cmd = "/opt/puppetlabs/bin/puppet agent -t --server #{puppetserver}"
+        commands = []
+        cmd = "eatmydata /opt/puppetlabs/bin/puppet agent -t --server #{puppetserver}"
         cmd += " --debug" if ENV['debug']
         cmd += " --trace" if ENV['trace']
-        cmd
+        commands << cmd
+        commands << "sync"
       end
     end
   end
@@ -54,7 +56,10 @@ namespace :puppet do
       puppetserver_fqdn = roles('puppetserver').first
       upload_bootstrap_env(puppetserver_fqdn)
       on(puppetserver_fqdn, user: 'root') do
-        "/opt/puppetlabs/bin/puppet apply --environment bootstrap -e 'include xp,xp::locales,xp::puppet::server'"
+        [
+          "eatmydata /opt/puppetlabs/bin/puppet apply --environment bootstrap -e 'include xp,xp::locales,xp::puppet::server'",
+          "sync"
+        ]
       end
     end
 
