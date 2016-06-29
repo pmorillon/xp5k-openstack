@@ -104,5 +104,6 @@ task :run do
   ENV['host'] = 'puppetserver'
   Rake::Task['puppet:agent:run'].execute
   Rake::Task['scenario:main'].execute
+  XP5K::Rake::Timer.summary
 end
 
