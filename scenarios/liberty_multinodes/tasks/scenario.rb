@@ -66,7 +66,6 @@ xp.define_job(@job_def)
 
 # Define Kadeploy deployment (required)
 #
-@deployment_def['version'] = '6'
 xp.define_deployment(@deployment_def)
 
 
