@@ -10,6 +10,7 @@ class puppet::server (
   $reports                    = undef,
   String $ca                  = 'enabled',
   Boolean $soft_write_failure = true,
+  String $version             = '2.4.0-1puppetlabs1',
   Array $autosign             = []
 ) {
 
@@ -19,7 +20,7 @@ class puppet::server (
   # Need to puppetdb compare version.
   package {
     'puppetserver':
-      ensure => installed;
+      ensure => $version;
     'puppetdb-termini':
       ensure => $puppetdb_terminus ? {
         true    => installed,
@@ -90,35 +91,37 @@ master:
 ';
   }
 
+  #$ca_config_file = "/etc/puppetlabs/puppetserver/services.d/ca.cfg"
+  $ca_config_file = "/etc/puppetlabs/puppetserver/bootstrap.cfg"
 
   case $ca {
     'enabled': {
       exec {
         'puppet_ca_enable_uncomment':
-          command => "/bin/sed -i 's/^#puppetlabs.services.ca.certificate-authority-service/puppetlabs.services.ca.certificate-authority-service/g' /etc/puppetlabs/puppetserver/bootstrap.cfg",
-          unless  => "/bin/grep -e '^puppetlabs.services.ca.certificate-authority-service' /etc/puppetlabs/puppetserver/bootstrap.cfg",
+          command => "/bin/sed -i 's/^#puppetlabs.services.ca.certificate-authority-service/puppetlabs.services.ca.certificate-authority-service/g' ${ca_config_file}",
+          unless  => "/bin/grep -e '^puppetlabs.services.ca.certificate-authority-service' ${ca_config_file}",
           tag     => 'ca';
       }
 
       exec {
         'puppet_ca_disable_comment':
-          command => "/bin/sed -i 's/^puppetlabs.services.ca.certificate-authority-disabled-service/#puppetlabs.services.ca.certificate-authority-disabled-service/g' /etc/puppetlabs/puppetserver/bootstrap.cfg",
-          unless  => "/bin/grep -e '^#puppetlabs.services.ca.certificate-authority-disabled-service' /etc/puppetlabs/puppetserver/bootstrap.cfg",
+          command => "/bin/sed -i 's/^puppetlabs.services.ca.certificate-authority-disabled-service/#puppetlabs.services.ca.certificate-authority-disabled-service/g' ${ca_config_file}",
+          unless  => "/bin/grep -e '^#puppetlabs.services.ca.certificate-authority-disabled-service' ${ca_config_file}",
           tag     => 'ca';
       }
     }
     'disabled': {
       exec {
         'puppet_ca_enable_comment':
-          command => "/bin/sed -i 's/^puppetlabs.services.ca.certificate-authority-service/#puppetlabs.services.ca.certificate-authority-service/g' /etc/puppetlabs/puppetserver/bootstrap.cfg",
-          unless  => "/bin/grep -e '^#puppetlabs.services.ca.certificate-authority-service' /etc/puppetlabs/puppetserver/bootstrap.cfg",
+          command => "/bin/sed -i 's/^puppetlabs.services.ca.certificate-authority-service/#puppetlabs.services.ca.certificate-authority-service/g' ${ca_config_file}",
+          unless  => "/bin/grep -e '^#puppetlabs.services.ca.certificate-authority-service' ${ca_config_file}",
           tag     => 'ca';
       }
 
       exec {
         'puppet_ca_disable_uncomment':
-          command => "/bin/sed -i 's/^#puppetlabs.services.ca.certificate-authority-disabled-service/puppetlabs.services.ca.certificate-authority-disabled-service/g' /etc/puppetlabs/puppetserver/bootstrap.cfg",
-          unless  => "/bin/grep -e '^puppetlabs.services.ca.certificate-authority-disabled-service' /etc/puppetlabs/puppetserver/bootstrap.cfg",
+          command => "/bin/sed -i 's/^#puppetlabs.services.ca.certificate-authority-disabled-service/puppetlabs.services.ca.certificate-authority-disabled-service/g' ${ca_config_file}",
+          unless  => "/bin/grep -e '^puppetlabs.services.ca.certificate-authority-disabled-service' ${ca_config_file}",
           tag     => 'ca';
       }
     }
