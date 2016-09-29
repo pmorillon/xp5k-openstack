@@ -29,6 +29,7 @@ namespace :puppet do
         url = "http://apt.puppetlabs.com/#{repo_pkg}"
         cmd = [] << "wget -q #{url} && dpkg -i #{repo_pkg}"
         cmd << "rm #{repo_pkg}"
+        cmd << "wget https://apt.puppetlabs.com/pubkey.gpg && apt-key add pubkey.gpg"
         cmd << "apt-get update && apt-get install -y eatmydata lsb-release #{agent_pkg_name}=1.5.2-1trusty"
         cmd << "echo '' > /etc/environment"
       end
