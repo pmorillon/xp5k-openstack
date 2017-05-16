@@ -4,6 +4,12 @@
 
 class xp::puppet::server {
 
+  package {
+    'openjdk-7-jre-headless':
+      ensure => '7u51-2.4.6-1ubuntu4',
+      before => Class['puppet::server']
+  }
+
   class {
     '::puppet::server':
       puppetdb_terminus => true,
