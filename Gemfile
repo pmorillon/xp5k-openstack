@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
-gem 'xp5k', '~> 0.0.14'
+gem 'rack', '1.6.4'
+gem 'xp5k', '~> 0.0.15'
 #gem 'xp5k', :path => '../xp5k'
 gem 'rake', '~> 10.4', '>= 10.4.2'
 gem 'hiera', '~> 3.0', '>= 3.0.1'
