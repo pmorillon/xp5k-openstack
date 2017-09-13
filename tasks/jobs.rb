@@ -18,6 +18,7 @@ roles = [
 }
 
 @job_def[:reservation] = XP5K::Config[:reservation] unless XP5K::Config[:reservation].nil?
+@job_def[:jobid] =  XP5K::Config[:jobid] unless XP5K::Config[:jobid].nil?
 
 
 # Job management tasks
